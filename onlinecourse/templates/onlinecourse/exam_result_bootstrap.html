@@ -1,0 +1,50 @@
+{% extends 'onlinecourse/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Exam Result for {{ course.name }}</h2>
+
+    {% if grade >= 70 %}
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Congratulations!</h4>
+        <p>You passed the exam with a score of <strong>{{ grade }}%</strong>!</p>
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Sorry, you did not pass.</h4>
+        <p>Your score is <strong>{{ grade }}%</strong>. You need at least 70% to pass.</p>
+    </div>
+    {% endif %}
+
+    <h3>Your Score: {{ grade }}%</h3>
+
+    {% for question in questions %}
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>{{ question.question_text }} ({{ question.grade }} points)</h5>
+        </div>
+        <div class="card-body">
+            {% for choice in question.choice_set.all %}
+            <div class="form-check">
+                {% if choice.id in selected_ids %}
+                    {% if choice.is_correct %}
+                    <span class="badge bg-success">&#10004; {{ choice.choice_text }} (Correct)</span>
+                    {% else %}
+                    <span class="badge bg-danger">&#10008; {{ choice.choice_text }} (Wrong)</span>
+                    {% endif %}
+                {% else %}
+                    {% if choice.is_correct %}
+                    <span class="badge bg-warning text-dark">{{ choice.choice_text }} (Missed - Correct Answer)</span>
+                    {% else %}
+                    <span class="text-muted">{{ choice.choice_text }}</span>
+                    {% endif %}
+                {% endif %}
+                <br>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
